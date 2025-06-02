@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --secondary-text: #4a4a4a;
+            --border-color: #e5e5e5;
+            --accent-color: #2563eb;
+            --hover-bg: #f8f9fa;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1b26;
+            --text-color: #c0caf5;
+            --secondary-text: #9aa5ce;
+            --border-color: #414868;
+            --accent-color: #7aa2f7;
+            --hover-bg: #24283b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            font-size: 17px;
+            transition: all 0.2s ease;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header {
+            padding: 4rem 0 3rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .site-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+
+        .site-description {
+            font-size: 1.1rem;
+            color: var(--secondary-text);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background-color: var(--border-color);
+            border-radius: 13px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            outline: none;
+            font-size: 0;
+            text-indent: -9999px;
+            overflow: hidden;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--secondary-text);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background-color: var(--bg-color);
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .theme-toggle::before {
+            transform: translateX(24px);
+        }
+
+        .posts {
+            margin-bottom: 6rem;
+        }
+
+        .post {
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post:last-child {
+            border-bottom: none;
+            margin-bottom: 2rem;
+        }
+
+        .post-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+        }
+
+        .post-date {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .post-excerpt {
+            color: var(--secondary-text);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .post-content {
+            display: none;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .post-content.expanded {
+            display: block;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .post-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .post-content h2, .post-content h3 {
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .post-content h2 {
+            font-size: 1.3rem;
+        }
+
+        .post-content h3 {
+            font-size: 1.1rem;
+        }
+
+        .post-content strong {
+            font-weight: 600;
+        }
+
+        .post-content em {
+            font-style: italic;
+        }
+
+        .post-content pre {
+            background: var(--hover-bg);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'SF Mono', Monaco, 'Consolas', monospace;
+            font-size: 0.9rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .read-more {
+            color: var(--accent-color);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: opacity 0.2s ease;
+            display: inline-block;
+        }
+
+        .read-more:hover {
+            opacity: 0.7;
+        }
+
+        .no-posts {
+            text-align: center;
+            color: var(--secondary-text);
+            font-style: italic;
+            padding: 4rem 0;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            body {
+                font-size: 16px;
+            }
+            
+            header {
+                padding: 3rem 0 2rem;
+            }
+            
+            .site-title {
+                font-size: 1.8rem;
+            }
+            
+            .post-title {
+                font-size: 1.4rem;
+            }
+
+            .post {
+                margin-bottom: 3rem;
+                padding-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="site-title">k33punkn0wn</h1>
+            <p class="site-description">one day away</p>
+            <button class="theme-toggle" onclick="toggleTheme()"></button>
+        </header>
+
+        <main class="posts" id="postsContainer">
+            <!-- Posts will be dynamically loaded here -->
+        </main>
+    </div>
+
+    <script>
+        const blogPosts = [
+            {
+                id: 1,
+                title: "On Writing and Thinking",
+                date: "2025-06-02",
+                excerpt: "Why I started this blog and what I hope to accomplish through writing in public.",
+                content: `
+                    <p>I've been thinking about writing for a long time. Not the mechanical act of putting words on a page—I do that every day—but the deeper practice of writing as a tool for thinking, for discovery, for connection.</p>
+                    
+                    <p>There's something magical that happens when you commit your thoughts to written form. Ideas that seemed clear in your head reveal their gaps and inconsistencies. Arguments that felt airtight crumble under the weight of their own contradictions. But there's also the opposite phenomenon: thoughts that felt scattered and incomplete suddenly coalesce into something coherent, even beautiful.</p>
+                    
+                    <p>This blog is an experiment in thinking out loud. A place to work through ideas, share what I'm learning, and perhaps contribute something useful to the broader conversation. I don't promise perfect insights or definitive answers—just honest exploration of questions that seem worth pursuing.</p>
+                    
+                    <p>If you're reading this, thank you for joining me on this journey. I hope you find something here that sparks your own thinking, or at least provides a few moments of interesting distraction from whatever else demands your attention.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "The Importance of Depth in a Shallow World",
+                date: "2025-06-01",
+                excerpt: "In an age of infinite information and diminishing attention spans, the ability to think deeply has become both more difficult and more valuable.",
+                content: `
+                    <p>We live in an era of unprecedented access to information. With a few taps on a screen, we can access the sum of human knowledge, connect with people across the globe, and consume content created by millions of voices. This should be an unqualified good. In many ways, it is.</p>
+                    
+                    <p>But there's a hidden cost to this abundance: the erosion of our capacity for deep thought. When information is infinite and immediately accessible, we lose the incentive to truly understand any single piece of it. Why memorize facts when Google exists? Why develop a nuanced understanding of a topic when Wikipedia can give you the summary?</p>
+                    
+                    <h3>The Depth Advantage</h3>
+                    
+                    <p>Yet depth—real, hard-won understanding—remains as valuable as ever. Perhaps more so. In a world where everyone has access to the same surface-level information, competitive advantage increasingly comes from the ability to see patterns others miss, to connect disparate ideas in novel ways, to think several steps ahead.</p>
+                    
+                    <p>This kind of thinking requires sustained attention, the willingness to sit with confusion, and the patience to let understanding develop slowly over time. It's the opposite of what our digital environment encourages.</p>
+                    
+                    <h3>Cultivating Depth</h3>
+                    
+                    <p>So how do we cultivate depth in a shallow world? It starts with intentional choices about how we consume information and spend our time. Reading books instead of articles. Following fewer people on social media but engaging more thoughtfully with their ideas. Choosing quality over quantity in nearly everything.</p>
+                    
+                    <p>It also means protecting our attention like the finite resource it is. This might mean keeping our phones in another room while we work, setting aside dedicated time for deep thinking, or simply learning to sit quietly with our thoughts without immediately reaching for distraction.</p>
+                    
+                    <p>The paradox is that in our rush to stay informed about everything, we risk understanding nothing. Better to know a few things well than many things poorly.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "How to Add New Posts to This Blog",
+                date: "2025-05-30",
+                excerpt: "A simple guide for adding new content to this minimalist blog system.",
+                content: `
+                    <p>This blog is designed to be as simple as possible while still being elegant and functional. Adding new posts is straightforward—just follow these steps:</p>
+                    
+                    <h3>Step 1: Open the HTML file</h3>
+                    <p>Open your <code>index.html</code> file in any text editor. You can use VS Code, Sublime Text, or even a simple text editor like Notepad.</p>
+                    
+                    <h3>Step 2: Find the blogPosts array</h3>
+                    <p>Look for the JavaScript section and locate the <code>blogPosts</code> array. This contains all your blog posts as JavaScript objects.</p>
+                    
+                    <h3>Step 3: Add your new post</h3>
+                    <p>Add a new object to the beginning of the array (so it appears first on your blog):</p>
+                    
+                    <pre>{
+    id: 4,
+    title: "Your Post Title",
+    date: "2025-06-03",
+    excerpt: "A brief summary that appears on the main page...",
+    content: \`
+        &lt;p&gt;Your full post content goes here.&lt;/p&gt;
+        &lt;p&gt;You can use HTML tags for formatting like &lt;strong&gt;bold&lt;/strong&gt; and &lt;em&gt;italic&lt;/em&gt;.&lt;/p&gt;
+        &lt;h3&gt;Subheadings&lt;/h3&gt;
+        &lt;p&gt;And create structure with subheadings.&lt;/p&gt;
+    \`
+}</pre>
+                    
+                    <h3>Step 4: Save and publish</h3>
+                    <p>Save your file and push the changes to GitHub. Your new post will appear automatically on your live site.</p>
+                    
+                    <p><strong>Pro tip:</strong> Posts are automatically sorted by date (newest first), so make sure to use the correct date format: YYYY-MM-DD.</p>
+                `
+            }
+        ];
+
+        // Theme management
+        function toggleTheme() {
+            const body = document.body;
+            
+            if (body.dataset.theme === 'dark') {
+                body.dataset.theme = 'light';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.dataset.theme = 'dark';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            
+            body.dataset.theme = savedTheme;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Toggle post content
+        function togglePost(postId) {
+            const content = document.getElementById(`content-${postId}`);
+            const readMore = document.getElementById(`readmore-${postId}`);
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                readMore.textContent = 'Continue reading →';
+            } else {
+                content.classList.add('expanded');
+                readMore.textContent = '← Show less';
+            }
+        }
+
+        // Render posts
+        function renderPosts() {
+            const container = document.getElementById('postsContainer');
+            
+            if (blogPosts.length === 0) {
+                container.innerHTML = '<div class="no-posts">No posts yet. Check back soon for new essays and reflections.</div>';
+                return;
+            }
+
+            // Sort posts by date (newest first)
+            const sortedPosts = [...blogPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            container.innerHTML = sortedPosts.map(post => `
+                <article class="post">
+                    <h2 class="post-title">${post.title}</h2>
+                    <div class="post-date">${formatDate(post.date)}</div>
+                    <div class="post-excerpt">${post.excerpt}</div>
+                    <div class="read-more" id="readmore-${post.id}" onclick="togglePost(${post.id})">
+                        Continue reading →
+                    </div>
+                    <div class="post-content" id="content-${post.id}">
+                        ${post.content}
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // Initialize the blog
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            renderPosts();
+        });
+    </script>
+</body>
+</html>
