@@ -588,7 +588,8 @@
                 return;
             }
 
-            const sortedPosts = [...blogPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sort posts by ID (highest ID first)
+            const sortedPosts = [...blogPosts].sort((a, b) => b.id - a.id);
             
             container.innerHTML = sortedPosts.map(post => `
                 <div class="nav-post" onclick="scrollToPost(${post.id})">
@@ -607,8 +608,8 @@
                 return;
             }
 
-            // Sort posts by date (newest first)
-            const sortedPosts = [...blogPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sort posts by ID (highest ID first)
+            const sortedPosts = [...blogPosts].sort((a, b) => b.id - a.id);
             
             container.innerHTML = sortedPosts.map(post => `
                 <article class="post" id="post-${post.id}">
