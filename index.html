@@ -496,37 +496,48 @@
             overlay.classList.toggle('active');
         }
 
-        // Theme management
+        // Theme management with persistent storage
         function toggleTheme() {
             const body = document.body;
+            const currentTheme = body.dataset.theme;
             
-            if (body.dataset.theme === 'dark') {
+            if (currentTheme === 'dark') {
                 body.dataset.theme = 'light';
-                localStorage.setItem('theme', 'light');
+                localStorage.setItem('blog-theme', 'light');
             } else {
                 body.dataset.theme = 'dark';
-                localStorage.setItem('theme', 'dark');
+                localStorage.setItem('blog-theme', 'dark');
             }
         }
 
-        // Load saved theme
+        // Load saved theme on page load
         function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            const savedTheme = localStorage.getItem('blog-theme');
             const body = document.body;
             
-            body.dataset.theme = savedTheme;
+            // If no saved theme, default to light
+            if (savedTheme) {
+                body.dataset.theme = savedTheme;
+            } else {
+                body.dataset.theme = 'light';
+                localStorage.setItem('blog-theme', 'light');
+            }
         }
 
-        // Format date
+        // Format date (fixed timezone issue)
         function formatDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            const date = new Date(year, month - 1, day); // month is 0-indexed
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
+            return date.toLocaleDateString(undefined, options);
         }
 
-        // Format date for sidebar (shorter)
+        // Format date for sidebar (shorter, fixed timezone issue)
         function formatSidebarDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            const date = new Date(year, month - 1, day); // month is 0-indexed
             const options = { month: 'short', day: 'numeric', year: 'numeric' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
+            return date.toLocaleDateString(undefined, options);
         }
 
         // Scroll to post
@@ -619,7 +630,7 @@
 
         // Initialize the blog
         document.addEventListener('DOMContentLoaded', function() {
-            loadTheme();
+            loadTheme(); // Load theme first
             renderPosts();
             renderSidebarNav();
             handleResize();
@@ -627,6 +638,12 @@
 
         // Handle window resize
         window.addEventListener('resize', handleResize);
+
+        // Save theme when page is about to unload (extra safety)
+        window.addEventListener('beforeunload', function() {
+            const currentTheme = document.body.dataset.theme;
+            localStorage.setItem('blog-theme', currentTheme);
+        });
     </script>
 </body>
 </html>
